@@ -32,4 +32,11 @@ object tree {
     case Leaf(x) => Leaf[B](f(x))
     case Branch(l, r) => Branch[B](map(l)(f), map(r)(f))
   }
+
+  // f is how to convert the value in a lead
+  // g is how to combine the results together
+  def fold[A,B](a: Tree[A])(f: A => B)(g: (B,B) => B): B = a match {
+    case Leaf(x) => f(x)
+    case Branch(l, r) => g(fold(l)(f)(g), fold(r)(f)(g))
+  }
 }
