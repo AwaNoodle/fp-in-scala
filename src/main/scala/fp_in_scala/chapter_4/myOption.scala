@@ -2,10 +2,7 @@ package fp_in_scala.chapter_4
 
 // 4.1
 sealed trait MyOption[+A] {
-  def map[B](f: A => B): MyOption[B] = this match {
-    case MyNone => MyNone
-    case MySome(a) => MySome(f(a))
-  }
+  def map[B](f: A => B): MyOption[B] = this.flatMap(x => MySome(f(x)))
   
   def flatMap[B](f: A => MyOption[B]): MyOption[B] = this match {
     case MyNone => MyNone
