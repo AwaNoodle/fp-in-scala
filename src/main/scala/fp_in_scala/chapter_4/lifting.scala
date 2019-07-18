@@ -9,10 +9,9 @@ object lifting {
     } yield f(valA, valB)
 
     //4.4
-    def sequence[A](a: List[Option[A]]): Option[List[A]] = {
-      Some(for {
-        optA <- a
-        valA <- optA
-      } yield valA)
+    def sequence[A](a: List[Option[A]]): Option[List[A]] = a match {
+      // If h is None, then the flatMap will return None, else you keep building the list
+      case h :: t => h.flatMap(valHead => sequence(t).map(tailList => valHead :: tailList))
+      case Nil => Some(Nil)
     }
 }
