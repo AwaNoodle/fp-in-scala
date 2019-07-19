@@ -14,4 +14,10 @@ object lifting {
       case h :: t => h.flatMap(valHead => sequence(t).map(tailList => valHead :: tailList))
       case Nil => Some(Nil)
     }
+
+    //4.5
+    def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = a match {
+      case h :: t => f(h).flatMap(valHead => traverse(t)(f).map(tailList => valHead :: tailList))
+      case Nil => Some(Nil)
+    }
 }
