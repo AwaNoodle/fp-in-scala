@@ -27,10 +27,8 @@ sealed trait MyEither[+E, +A] {
 
 object MyEitherOps {
   // 4.7
-  def sequence[E, A](es: List[MyEither[E, A]]): MyEither[E, List[A]] = es match {
-    case h :: t => h.flatMap(valHead => sequence(t).map(tailList => valHead :: tailList))
-    case Nil => MyRight(Nil)
-  }
+  def sequence[E, A](es: List[MyEither[E, A]]): MyEither[E, List[A]] = 
+    traverse(es)(a => a)
 
   def traverse[E, A, B](as: List[A])(f: A => MyEither[E, B]): MyEither[E, List[B]] = as match {
     case Nil => MyRight(Nil)
