@@ -19,7 +19,13 @@ sealed trait Stream[+A] {
   }
   
   // 5.2
-  def drop(n: Int): Stream[A] = ???
+  def drop(n: Int): Stream[A] = {
+    if(n <= 0) this
+    else this match {
+      case Empty => Empty
+      case Cons(h, t) => t().drop(n - 1)
+    }
+  }
 }
 
 case object Empty extends Stream[Nothing]
