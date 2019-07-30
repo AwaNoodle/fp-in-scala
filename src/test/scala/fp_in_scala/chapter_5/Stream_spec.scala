@@ -3,8 +3,8 @@ package fp_in_scala.chapter_5
 import org.scalatest.{FlatSpec, Matchers}
 
 class Stream_spec extends FlatSpec with Matchers {
-  val shortStream = Stream.cons[Int](1, Stream.cons(2, Empty))
-  val longerStream = Seq(1,2,3,4,5).foldRight[Stream[Int]](Empty)((x,b) => Stream.cons(x, b))
+  val shortStream = Stream(1, 2)
+  val longerStream = Stream(1,2,3,4,5) 
 
   // 5.1
   "toList" should "convert a stream to a list" in {
@@ -51,5 +51,12 @@ class Stream_spec extends FlatSpec with Matchers {
 
   it should "return empty for an empty stream" in {
     Empty.drop(10) shouldBe Empty
+  }
+
+  // 5.3
+  "takeWhile" should "take stream items while a predicate is true" in {
+    longerStream.takeWhile(x => x < 4).toList shouldBe List(1,2,3)
+    longerStream.takeWhile(x => false) shouldBe Empty
+    Stream.empty[Int].takeWhile(x => x < 4) shouldBe Empty
   }
 }
