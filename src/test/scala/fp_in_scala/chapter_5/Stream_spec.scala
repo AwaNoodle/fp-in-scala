@@ -87,4 +87,27 @@ class Stream_spec extends FlatSpec with Matchers {
   it should "return None if the stream is empty" in {
     Stream.empty[Int].headOption shouldBe None
   }
+
+  // 5.7
+  "map" should "convert a stream of one type into a stream of another type" in {
+    shortStream.map(_.toString).toList shouldBe List("1","2")
+  }
+
+  "filter" should "return a stream with elements that match the filter" in {
+    longerStream.filter(_ % 2 == 0).toList shouldBe List(2,4)
+  }
+
+  "add" should "add an element to the end of the stream" in {
+    shortStream.add(() => 5).toList shouldBe List(1,2,5)
+  }
+
+  "append" should "append one stream to the other" in {
+    shortStream.append(longerStream).toList shouldBe List(1,2,1,2,3,4,5)
+  }
+
+  "flatMap" should "flatten and map a stream" in {
+    shortStream.flatMap(n => {
+      Stream((0 to n).map(x => x.toString): _*)
+    }).toList shouldBe List("0", "1", "0", "1", "2")
+  }
 }

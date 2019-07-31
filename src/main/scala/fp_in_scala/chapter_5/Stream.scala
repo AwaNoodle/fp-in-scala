@@ -48,14 +48,41 @@ sealed trait Stream[+A] {
   }
 
   def takeWhile_2(p: A => Boolean): Stream[A] =
-    this.foldRight(Stream.empty[A]) { (a, funcB) =>
+    foldRight(Stream.empty[A]) { (a, funcB) =>
       if (p(a)) Stream.cons(a, funcB)
       else funcB
     }
 
   // 5.6
-   def headOption: Option[A] = 
-    this.foldRight[Option[A]](None)((a, _) => Some(a))
+  def headOption: Option[A] =
+    foldRight[Option[A]](None)((a, _) => Some(a))
+
+  // 5.7
+  def map[B](f: A => B): Stream[B] =
+    foldRight(Stream.empty[B]) { (a, funcB) =>
+      Stream.cons(f(a), funcB)
+    }
+
+  def filter(f: A => Boolean): Stream[A] =
+    foldRight(Stream.empty[A]) { (a, funcB) =>
+      if (f(a)) Stream.cons(a, funcB)
+      else funcB
+    }
+
+  def add[B >: A](elm: () => B): Stream[B] = {
+    lazy val lazyElm = elm
+    foldRight[Stream[B]](Cons(lazyElm, () => Empty)) { (a, funcB) =>
+      Stream.cons(a, funcB)
+    }
+  }
+
+  def append[B >: A](s: => Stream[B]): Stream[B] =
+    foldRight(s)((a, funcB) => Stream.cons(a, funcB))
+
+  def flatMap[B](f: A => Stream[B]): Stream[B] =
+    foldRight(Stream.empty[B]) { (a, funcB) =>
+      f(a).append(funcB)
+    }
 }
 
 case object Empty                                   extends Stream[Nothing]
