@@ -5,7 +5,7 @@ object subsequence {
   @annotation.tailrec
   def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
     val taken = sup.take(sub.length)
-    if(taken.length < sub.length) false
+    if (taken.length < sub.length) false
     else if (taken == sub) true
     else hasSubsequence(sup.tail, sub)
   }
