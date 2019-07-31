@@ -78,4 +78,13 @@ class Stream_spec extends FlatSpec with Matchers {
     longerStream.takeWhile_2(x => false) shouldBe Empty
     Stream.empty[Int].takeWhile_2(x => x < 4) shouldBe Empty
   }
+
+  // 5.6
+  "headOption" should "return the first element of this stream if it is nonempty" in {
+    longerStream.headOption shouldBe Some(1)
+  }
+
+  it should "return None if the stream is empty" in {
+    Stream.empty[Int].headOption shouldBe None
+  }
 }
