@@ -59,4 +59,23 @@ class Stream_spec extends FlatSpec with Matchers {
     longerStream.takeWhile(x => false) shouldBe Empty
     Stream.empty[Int].takeWhile(x => x < 4) shouldBe Empty
   }
+
+  "forAll" should "return true if a predicate is true for all elements" in {
+    longerStream.forAll(x => x < 6) shouldBe true
+  }
+
+  it should "return false if any of the elements fails the predicate" in {
+    longerStream.forAll(x => x < 3) shouldBe false
+  }
+
+  it should "return true if the stream is empty" in {
+    Stream.empty[Int].forAll(x => x < 6) shouldBe true
+  }
+
+  // 5.5
+  "takeWhile_2" should "take stream items while a predicate is true" in {
+    longerStream.takeWhile_2(x => x < 4).toList shouldBe List(1,2,3)
+    longerStream.takeWhile_2(x => false) shouldBe Empty
+    Stream.empty[Int].takeWhile_2(x => x < 4) shouldBe Empty
+  }
 }
