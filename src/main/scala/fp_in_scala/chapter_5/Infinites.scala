@@ -14,4 +14,15 @@ object Infinites {
     lazy val f_t = () => from(n + 1)
     Cons(f_h, f_t)
   }
+
+  // 5.10
+  def fibs(): Stream[Int] = {
+    def internalFibs(curr: Int, next: Int): Stream[Int] = {
+      lazy val f_h = () => curr
+      lazy val f_t = () => internalFibs(next, curr + next)
+      Cons(f_h, f_t)
+    }
+
+    internalFibs(0,1)
+  }
 }

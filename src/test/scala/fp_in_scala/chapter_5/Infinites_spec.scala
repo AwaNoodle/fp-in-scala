@@ -20,4 +20,9 @@ class Infinites_spec extends FlatSpec with Matchers {
     from(5).take(5).toList shouldBe List(5,6,7,8,9)
     from(1).take(1000).toList shouldBe (1 to 1000).toList
   }
+
+  // 5.10
+  "fibs" should "produce a stream of Fibbonaci numbers" in {
+    fibs.take(7).toList shouldBe List(0, 1, 1, 2, 3, 5, 8)
+  }
 }
