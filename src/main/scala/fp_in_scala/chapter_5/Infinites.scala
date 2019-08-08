@@ -7,4 +7,11 @@ object Infinites {
     lazy val f_t = () => constant(a)
     Cons(f_h, f_t)
   }
+
+  // 5.9
+  def from(n: Int): Stream[Int] = {
+    lazy val f_h = () => n
+    lazy val f_t = () => from(n + 1)
+    Cons(f_h, f_t)
+  }
 }
