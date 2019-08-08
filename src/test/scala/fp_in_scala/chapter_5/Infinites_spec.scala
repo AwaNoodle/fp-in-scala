@@ -2,8 +2,8 @@ package fp_in_scala.chapter_5
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class Infinates_spec extends FlatSpec with Matchers {
-  import Infinates._
+class Infinites_spec extends FlatSpec with Matchers {
+  import Infinites._
   
   "constant" should "produce an infinate stream of type A" in {
     val constant_a = constant("a")

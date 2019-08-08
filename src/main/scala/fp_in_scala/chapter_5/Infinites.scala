@@ -1,6 +1,6 @@
 package fp_in_scala.chapter_5
 
-object Infinates {
+object Infinites {
   // 5.8
   def constant[A](a: A): Stream[A] = {
     lazy val f_h = () => a
