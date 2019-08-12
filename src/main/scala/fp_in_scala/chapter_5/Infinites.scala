@@ -25,4 +25,9 @@ object Infinites {
 
     internalFibs(0,1)
   }
+
+  // 5.11
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = {
+    f(z).fold(Stream.empty[A])(((res)) => Cons(() => res._1, () => unfold[A,S](res._2)(f)))
+  }
 }

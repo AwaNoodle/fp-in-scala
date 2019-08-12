@@ -25,4 +25,25 @@ class Infinites_spec extends FlatSpec with Matchers {
   "fibs" should "produce a stream of Fibbonaci numbers" in {
     fibs.take(7).toList shouldBe List(0, 1, 1, 2, 3, 5, 8)
   }
+
+  // 5.11
+  "unfold" should "produce a stream from the supplied function" in { 
+    def inc(currState: Int): Option[(Int, Int)] = {
+      Some((currState, currState + 1))
+    }
+
+    unfold(0)(inc).take(7).toList shouldBe (0 to 6).toList
+  }
+
+  it should "finish the stream when the func returns None" in {
+    def inc(currState: Int): Option[(Int, Int)] = {
+      if(currState < 5) {
+        Some((currState, currState + 1))
+      } else {
+        None
+      }
+    }
+
+    unfold(0)(inc).take(7).toList shouldBe (0 to 4).toList
+  }
 }
