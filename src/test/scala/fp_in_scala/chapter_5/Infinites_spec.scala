@@ -46,4 +46,12 @@ class Infinites_spec extends FlatSpec with Matchers {
 
     unfold(0)(inc).take(7).toList shouldBe (0 to 4).toList
   }
+
+  it should "allow an implementation of fibs" in {
+    def fibs(s: [(Int, Int)]): Option[(Int, (Int, Int))] = ???
+
+    unfold((0,0))(fibs)
+      .take(7)
+      .toList shouldBe List(0, 1, 1, 2, 3, 5, 8)
+  }
 }
