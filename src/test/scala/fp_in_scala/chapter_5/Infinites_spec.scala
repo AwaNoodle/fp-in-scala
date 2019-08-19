@@ -48,7 +48,11 @@ class Infinites_spec extends FlatSpec with Matchers {
   }
 
   it should "allow an implementation of fibs" in {
-    def fibs(s: [(Int, Int)]): Option[(Int, (Int, Int))] = ???
+    // Pair is previous, current
+    def fibs(s: (Int, Int)): Option[(Int, (Int, Int))] = {    
+      val current = if(s._2 == 0) 1 else s._2
+      Some((s._2, (s._2, s._1 + current)))
+    }
 
     unfold((0,0))(fibs)
       .take(7)
