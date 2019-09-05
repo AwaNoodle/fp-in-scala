@@ -6,7 +6,7 @@ class Infinites_spec extends FlatSpec with Matchers {
   import Infinites._
   
   // 5.8
-  "constant" should "produce an infinate stream of type A" in {
+  "constant" should "produce an infinite stream of type A" in {
     val constant_a = constant("a")
     constant_a.take(5).toList shouldBe List("a","a","a","a","a")
     constant_a.take(20).toList shouldBe (1 to 20).map(_ => "a").toList
@@ -47,6 +47,7 @@ class Infinites_spec extends FlatSpec with Matchers {
     unfold(0)(inc).take(7).toList shouldBe (0 to 4).toList
   }
 
+  // 5.12
   it should "allow an implementation of fibs" in {
     // Pair is previous, current
     def fibs(s: (Int, Int)): Option[(Int, (Int, Int))] = {    
@@ -57,5 +58,25 @@ class Infinites_spec extends FlatSpec with Matchers {
     unfold((0,0))(fibs)
       .take(7)
       .toList shouldBe List(0, 1, 1, 2, 3, 5, 8)
+  }
+
+  it should "allow an implementation of from" in {
+    def from(current: Int): Option[(Int,Int)] = Some(current -> (current + 1))
+
+    unfold(5)(from).take(5).toList shouldBe List(5,6,7,8,9)
+    unfold(1)(from).take(1000).toList shouldBe (1 to 1000).toList
+  }
+
+  it should "allow an implementation of constant" in {
+    def constant[T](value: T): Option[(T, T)] = Some(value -> value)
+
+    unfold("a")(constant).take(5).toList shouldBe List("a","a","a","a","a")
+    unfold(10)(constant).take(107).toList shouldBe (1 to 107).map(_ => 10).toList
+  }
+
+  it should "allow an implementation of ones" in {
+    def ones(value: Int): Option[(Int, Int)] = Some(value -> value)
+
+    unfold(1)(ones).take(10) shouldBe (1 to 10).map(_ => 1)
   }
 }
