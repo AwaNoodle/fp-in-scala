@@ -80,13 +80,15 @@ class Infinites_spec extends FlatSpec with Matchers {
     unfold(1)(ones).take(10) shouldBe (1 to 10).map(_ => 1)
   }
 
-  // 5.13
+  // 5.13 
   it should "allow an implementation of map" in {
-    def map(value: Seq[Int]): Option[(String, Seq[Int])] = value match {
-      case h :: t => Some(h.toString -> t)
-      case Nil => None
-    }
+    def map[A, B](stream : Stream[A])(f : A => B) : Stream[B] = 
+      unfold[B, Stream[A]](stream) { 
+        case Empty => None
+        case Cons(head, tail) => Some(f(head()) -> tail())
+      }
 
-    unfold(Seq(1,2,3))(map).take(3) should Seq("1","2","3")
+    val testStream = unfold(1)(x => Some[(Int, Int)](x -> x))
+    map(testStream)(x => x +1).take(5) shouldBe List(2,2,2,2,2)
   }
 }
