@@ -79,4 +79,14 @@ class Infinites_spec extends FlatSpec with Matchers {
 
     unfold(1)(ones).take(10) shouldBe (1 to 10).map(_ => 1)
   }
+
+  // 5.13
+  it should "allow an implementation of map" in {
+    def map(value: Seq[Int]): Option[(String, Seq[Int])] = value match {
+      case h :: t => Some(h.toString -> t)
+      case Nil => None
+    }
+
+    unfold(Seq(1,2,3))(map).take(3) should Seq("1","2","3")
+  }
 }
