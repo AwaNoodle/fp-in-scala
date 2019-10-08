@@ -91,4 +91,18 @@ class Infinites_spec extends FlatSpec with Matchers {
     val testStream = unfold(1)(x => Some[(Int, Int)](x -> x))
     map(testStream)(x => x +1).take(5) shouldBe List(2,2,2,2,2)
   }
+
+  it should "allow an implementation of take" in {
+    def take[A](stream: Stream[A])(amt: Int): List[A] = {
+      val wrapper = (stream -> amt)
+      unfold(wrapper) {
+        case (Empty, _) => None
+        case (_, acc) if acc == 0 => None
+        case (Cons(head, tail), acc) => Some((head(), (tail() -> (acc - 1))))
+      }.toList
+    }
+
+    val testStream = constant(5)
+    take(testStream)(3) shouldBe List(5,5,5)
+  }
 }
