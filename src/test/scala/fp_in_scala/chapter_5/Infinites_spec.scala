@@ -105,4 +105,17 @@ class Infinites_spec extends FlatSpec with Matchers {
     val testStream = constant(5)
     take(testStream)(3) shouldBe List(5,5,5)
   }
+
+  it should "llow an implementation of takeWhile" in {
+    def take[A](stream: Stream[A])(f: A => Boolean): Stream[A] = {
+      unfold(stream) {
+        case Cons(head, tail) if !f(head()) => None
+        case Cons(head, tail) => Some((head(), tail()))
+        case _ => None
+      }
+    }
+
+    val testStream = from(1)
+    take(testStream)(x => x < 4).toList shouldBe List(1,2,3)
+  }
 }
