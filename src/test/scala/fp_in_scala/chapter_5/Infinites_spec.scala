@@ -145,7 +145,7 @@ class Infinites_spec extends FlatSpec with Matchers {
 
     val testA = Stream(1,2,3,4,5) 
     val testB = Stream("a","b","c","d")
-    zipAll(testA, testB).take(5) shouldBe List((Some(1), Some("a")),
+    zipAll(testA, testB).take(10) shouldBe List((Some(1), Some("a")),
                                                 (Some(2), Some("b")),
                                                 (Some(3), Some("c")),
                                                 (Some(4), Some("d")),
