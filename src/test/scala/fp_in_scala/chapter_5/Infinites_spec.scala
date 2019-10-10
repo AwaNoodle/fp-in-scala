@@ -106,7 +106,7 @@ class Infinites_spec extends FlatSpec with Matchers {
     take(testStream)(3) shouldBe List(5,5,5)
   }
 
-  it should "llow an implementation of takeWhile" in {
+  it should "allow an implementation of takeWhile" in {
     def take[A](stream: Stream[A])(f: A => Boolean): Stream[A] = {
       unfold(stream) {
         case Cons(head, tail) if !f(head()) => None
@@ -117,5 +117,19 @@ class Infinites_spec extends FlatSpec with Matchers {
 
     val testStream = from(1)
     take(testStream)(x => x < 4).toList shouldBe List(1,2,3)
+  }
+
+  it should "allow an implementation of zipWith" in {
+    def zipWith[A,B](a: Stream[A], b: Stream[B]): Stream[(A,B)] = {
+      unfold((a,b)) {
+        case (Empty, _) => None
+        case (_, Empty) => None
+        case (Cons(headA, tailA), Cons(headB, tailB)) => Some(((headA(), headB()), (tailA(), tailB())))
+      }
+    }
+
+    val testA = Stream(1,2,3,4,5) 
+    val testB = Stream("a","b","c","d")
+    zipWith(testA, testB).take(5) shouldBe List((1,"a"),(2, "b"),(3, "c"),(4, "d"))
   }
 }
