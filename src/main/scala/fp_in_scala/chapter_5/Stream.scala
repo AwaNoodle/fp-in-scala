@@ -107,8 +107,7 @@ sealed trait Stream[+A] {
   // 5.14
   def startsWith[B >: A](s: Stream[B]): Boolean = {
     // Should not see a None, Some, before a Some, None
-    val zipped = s.zipWith(this)
-    zipped.toList.forall { r: (B, A) => r._1 == r._2 }
+    s.zipWith(this).forAll { r: (B, A) => r._1 == r._2 }
   }
 }
 
