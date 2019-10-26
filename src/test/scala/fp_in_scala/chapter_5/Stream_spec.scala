@@ -110,4 +110,19 @@ class Stream_spec extends FlatSpec with Matchers {
       Stream((0 to n).map(x => x.toString): _*)
     }).toList shouldBe List("0", "1", "0", "1", "2")
   }
+
+  // 5.14
+  "startsWith" should "return true if the main stream starts with the supplied stream" in {
+    val startStream = Stream(1,2,3)
+    val comparitorStream = Stream(1,2)
+
+    startStream.startsWith(comparitorStream) shouldBe true
+  }
+
+  it should "return false if the main stream doens't start with the supplied stream" in {
+    val startStream = Stream(1,2,3)
+    val comparitorStream = Stream(8,9)
+
+    startStream.startsWith(comparitorStream) shouldBe false
+  }
 }

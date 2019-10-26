@@ -120,32 +120,15 @@ class Infinites_spec extends FlatSpec with Matchers {
   }
 
   it should "allow an implementation of zipWith" in {
-    def zipWith[A,B](a: Stream[A], b: Stream[B]): Stream[(A,B)] = {
-      unfold((a,b)) {
-        case (Empty, _) => None
-        case (_, Empty) => None
-        case (Cons(headA, tailA), Cons(headB, tailB)) => Some(((headA(), headB()), (tailA(), tailB())))
-      }
-    }
-
     val testA = Stream(1,2,3,4,5) 
     val testB = Stream("a","b","c","d")
-    zipWith(testA, testB).take(5) shouldBe List((1,"a"),(2, "b"),(3, "c"),(4, "d"))
+    testA.zipWith(testB).take(5) shouldBe List((1,"a"),(2, "b"),(3, "c"),(4, "d"))
   }
 
   it should "allow an implementation of zipAll" in {
-    def zipAll[A,B](a: Stream[A], b: Stream[B]): Stream[(Option[A],Option[B])] = {
-      unfold((a,b)) {
-        case (Empty, Cons(headB, tailB)) => Some(((None, Some(headB())), (Empty, tailB())))
-        case (Cons(headA, tailA), Empty) => Some(((Some(headA()), None)), (tailA(), Empty))
-        case (Cons(headA, tailA), Cons(headB, tailB)) => Some(((Some(headA()), Some(headB())), (tailA(), tailB())))
-        case _ => None
-      }
-    }
-
     val testA = Stream(1,2,3,4,5) 
     val testB = Stream("a","b","c","d")
-    zipAll(testA, testB).take(10) shouldBe List((Some(1), Some("a")),
+    testA.zipAll(testB).take(10) shouldBe List((Some(1), Some("a")),
                                                 (Some(2), Some("b")),
                                                 (Some(3), Some("c")),
                                                 (Some(4), Some("d")),

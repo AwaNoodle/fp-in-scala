@@ -1,6 +1,8 @@
 package fp_in_scala.chapter_5
 
 sealed trait Stream[+A] {
+  import Infinites.unfold
+
   // 5.1
   def toList: List[A] = this match {
     case Empty      => Nil
@@ -83,6 +85,31 @@ sealed trait Stream[+A] {
     foldRight(Stream.empty[B]) { (a, funcB) =>
       f(a).append(funcB)
     }
+
+  // 5 13
+  def zipWith[B](b: Stream[B]): Stream[(A,B)] = {
+    unfold((this,b)) {
+      case (Empty, _) => None
+      case (_, Empty) => None
+      case (Cons(headA, tailA), Cons(headB, tailB)) => Some(((headA(), headB()), (tailA(), tailB())))
+    }
+  }
+
+  def zipAll[B](b: Stream[B]): Stream[(Option[A],Option[B])] = {
+    unfold((this,b)) {
+      case (Empty, Cons(headB, tailB)) => Some(((None, Some(headB())), (Empty, tailB())))
+      case (Cons(headA, tailA), Empty) => Some(((Some(headA()), None)), (tailA(), Empty))
+      case (Cons(headA, tailA), Cons(headB, tailB)) => Some(((Some(headA()), Some(headB())), (tailA(), tailB())))
+      case _ => None
+    }
+  }
+
+  // 5.14
+  def startsWith[B >: A](s: Stream[B]): Boolean = {
+    // Should not see a None, Some, before a Some, None
+    val zipped = s.zipWith(this)
+    zipped.toList.forall { r: (B, A) => r._1 == r._2 }
+  }
 }
 
 case object Empty                                   extends Stream[Nothing]
