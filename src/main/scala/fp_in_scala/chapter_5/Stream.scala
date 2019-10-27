@@ -115,7 +115,7 @@ sealed trait Stream[+A] {
     unfold(this) {
       case Empty => None
       case Cons(h, t) => Some((Cons(h,t), t()))
-    }.append(Cons(() => Empty, () => Empty))
+    }.append(Stream(Stream.empty))
   }
 }
 
