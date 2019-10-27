@@ -125,4 +125,15 @@ class Stream_spec extends FlatSpec with Matchers {
 
     startStream.startsWith(comparitorStream) shouldBe false
   }
+
+  // 5.15
+  "tails" should "return a stream of suffixes of the input stream" in {
+    val startStream = Stream(1,2,3)
+    val expected = Stream(Stream(1,2,3), Stream(2,3), Stream(3), Stream.empty)
+
+    def deepToList[A](s: Stream[Stream[A]]) = s.toList.map(_.toList)
+
+    val result = startStream.tails
+    deepToList(result) shouldBe deepToList(expected)
+  }
 }

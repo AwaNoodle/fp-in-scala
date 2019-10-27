@@ -109,6 +109,14 @@ sealed trait Stream[+A] {
     // Should not see a None, Some, before a Some, None
     s.zipWith(this).forAll { r: (B, A) => r._1 == r._2 }
   }
+
+  // 5.15
+  def tails: Stream[Stream[A]] = {
+    unfold(this) {
+      case Empty => None
+      case Cons(h, t) => Some((Cons(h,t), t()))
+    }.append(Cons(() => Empty, () => Empty))
+  }
 }
 
 case object Empty                                   extends Stream[Nothing]
