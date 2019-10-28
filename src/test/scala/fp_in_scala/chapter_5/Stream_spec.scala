@@ -136,4 +136,9 @@ class Stream_spec extends FlatSpec with Matchers {
     val result = startStream.tails
     deepToList(result) shouldBe deepToList(expected)
   }
+
+  // 5.16
+  "scanRight" should "return the stream scanned and transformed by f" in {
+    Stream(1,2,3).scanRight(0)(_ + _).toList shouldBe List(6,5,3,0)
+  }
 }
