@@ -2,7 +2,7 @@ package fp_in_scala.chapter_6
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class SimpleRNG_spec extends FlatSpec with Matchers {
+class RNGOps_spec extends FlatSpec with Matchers {
   import RNGOps._
 
   case class TestRNG(testValue: Int) extends RNG {
