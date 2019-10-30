@@ -1,6 +1,7 @@
 package fp_in_scala.chapter_6
 
 object RNGOps {
+  // 6.1
   def nonNegativeInt(rng: RNG): (Int, RNG) = {
     val next = rng.nextInt
     
@@ -11,5 +12,11 @@ object RNGOps {
     } else {
       next
     }
+  }
+
+  // 6.2
+  def double(rng: RNG): (Double, RNG) = {
+    val nonNeg = nonNegativeInt(rng)
+    (nonNeg._1 / (Int.MaxValue.toDouble + 0.1), nonNeg._2)
   }
 }

@@ -23,4 +23,14 @@ class RNGOps_spec extends FlatSpec with Matchers {
     val someValue = TestRNG(Int.MinValue)
     nonNegativeInt(someValue) shouldBe (Int.MaxValue, someValue)
   }
+
+  "double" should "generate a random number between 0 and 1" in {
+    val someValue = TestRNG(Int.MaxValue / 2)
+    double(someValue) shouldBe (0.4999999997438863, someValue)
+  }
+
+  it should "not return 1" in {
+    val someValue = TestRNG(Int.MaxValue)
+    double(someValue) shouldBe (0.9999999999534339, someValue)
+  }
 }
