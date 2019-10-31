@@ -1,6 +1,15 @@
 package fp_in_scala.chapter_6
 
 object RNGOps {
+  // From text
+  type Rand[+A] = RNG => (A, RNG)
+
+  def map[A,B](s: Rand[A])(f: A => B): Rand[B] =
+    rng => {
+      val (a, rng2) = s(rng)
+      (f(a), rng2)
+    }
+
   // 6.1
   def nonNegativeInt(rng: RNG): (Int, RNG) = {
     val next = rng.nextInt
@@ -14,10 +23,15 @@ object RNGOps {
     }
   }
 
-  // 6.2
-  def double(rng: RNG): (Double, RNG) = {
-    val nonNeg = nonNegativeInt(rng)
-    (nonNeg._1 / (Int.MaxValue.toDouble + 0.1), nonNeg._2)
+  // 6.2 (replaced by 6.8)
+  // def double(rng: RNG): (Double, RNG) = {
+  //   val nonNeg = nonNegativeInt(rng)
+  //   (nonNeg._1 / (Int.MaxValue.toDouble + 0.1), nonNeg._2)
+  // }
+
+  // 6.5
+  val double: Rand[Double] = {
+    map(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 0.1))
   }
 
   // 6.3
