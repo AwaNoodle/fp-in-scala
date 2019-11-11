@@ -61,4 +61,23 @@ object RNGOps {
       (state._1 :+ i, next)
     }
   }
+
+  // 6.6
+  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = {
+    rng => {
+      val (resA, rngA) = ra(rng)
+      val (resB, rngB) = rb(rngA)
+      (f(resA, resB), rngB) 
+    }
+  }
+
+  // 6.7
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = { 
+    rng => {
+      fs.foldLeft((List[A](), rng)) { (state, next) => 
+        val (nxtRes, nxtRng) = next(rng)
+        (state._1 :+ nxtRes, nxtRng) 
+      }
+    }
+  }
 }

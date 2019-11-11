@@ -67,4 +67,22 @@ class RNGOps_spec extends FlatSpec with Matchers {
     randomInts._1.length shouldBe expectedLength
     randomInts shouldBe expected
   }
+
+  // 6.6
+  "map2" should "take two actions and combine them using f" in {
+    val rng = TestRNG(Int.MaxValue /2)
+    val action = map2(double, double){ (a,b) => (a, b)}
+
+    action(rng) shouldBe ((0.4999999997438863, 0.4999999997438863), rng)
+  }
+
+  // 6.7
+  "Sequence" should "take a list of Rands and return a list of results" in {
+    val rng = TestRNG(Int.MaxValue /2)
+    val listOfActions = (1 to 10).map(_ => double).toList
+    val expectedResults = (1 to 10).map(_ => 0.4999999997438863)
+    val seqAction = sequence(listOfActions)
+
+    seqAction(rng) shouldBe (expectedResults, rng)
+  }
 }
