@@ -85,4 +85,12 @@ class RNGOps_spec extends FlatSpec with Matchers {
 
     seqAction(rng) shouldBe (expectedResults, rng)
   }
+
+  // 6.8
+  "flatMap" should "allow a conversion of the result of the initial function via f" in {
+    val rng = TestRNG(10)
+
+    val action = flatMap(rng => rng.nextInt)(a => rng => (a.toDouble, rng))
+    action(rng) shouldBe (10, rng)
+  }
 }

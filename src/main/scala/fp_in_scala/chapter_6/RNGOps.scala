@@ -77,4 +77,12 @@ object RNGOps {
       map2(next, state)(_ :: _)
     }
   }
+
+  // 6.8
+  def flatMap[A,B](f: Rand[A])(g: A => Rand[B]): Rand[B] = {
+    rng => {
+      val (aRes, aNext) = f(rng)
+      g(aRes)(aNext)
+    }
+  }
 }
