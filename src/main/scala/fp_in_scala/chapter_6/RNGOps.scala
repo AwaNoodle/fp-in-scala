@@ -4,10 +4,10 @@ object RNGOps {
   // From text
   type Rand[+A] = RNG => (A, RNG)
 
+  // Orig 6.1, Replace 6.8
   def map[A,B](s: Rand[A])(f: A => B): Rand[B] =
-    rng => {
-      val (a, rng2) = s(rng)
-      (f(a), rng2)
+    flatMap(s) { a =>
+      rng => (f(a), rng)
     }
 
   // 6.1
@@ -62,12 +62,12 @@ object RNGOps {
     }
   }
 
-  // 6.6
+  // Orig 6.6 - Replace 6.8
   def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = {
-    rng => {
-      val (resA, rngA) = ra(rng)
-      val (resB, rngB) = rb(rngA)
-      (f(resA, resB), rngB) 
+    flatMap(ra) { a =>
+      map(rb) { b => 
+        f(a,b)
+      } 
     }
   }
 
