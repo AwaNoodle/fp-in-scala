@@ -2,8 +2,6 @@ package fp_in_scala.chapter_6
 
 object RNGOps {
   // From text
-  // case class State[S,+A](run: S => (A,S))
-  
   type State[S,+A] = S => (A,S)
   type Rand[+A] = State[RNG, A]
 
