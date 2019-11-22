@@ -2,9 +2,14 @@ package fp_in_scala.chapter_6
 
 object RNGOps {
   // From text
-  type Rand[+A] = RNG => (A, RNG)
+  // case class State[S,+A](run: S => (A,S))
+  
+  type State[S,+A] = S => (A,S)
+  type Rand[+A] = State[RNG, A]
 
-  // Orig 6.1, Replace 6.8
+  def unit[A](a: A): Rand[A] = rng => (a, rng)
+
+  // Orig from text, Replace 6.8
   def map[A,B](s: Rand[A])(f: A => B): Rand[B] =
     flatMap(s) { a =>
       rng => (f(a), rng)
@@ -23,7 +28,7 @@ object RNGOps {
     }
   }
 
-  // 6.2 (replaced by 6.8)
+  // 6.2 (replaced by 6.5)
   // def double(rng: RNG): (Double, RNG) = {
   //   val nonNeg = nonNegativeInt(rng)
   //   (nonNeg._1 / (Int.MaxValue.toDouble + 0.1), nonNeg._2)
@@ -31,7 +36,7 @@ object RNGOps {
 
   // 6.5
   val double: Rand[Double] = {
-    map(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 0.1))
+    map(nonNegativeInt(_))(_ / (Int.MaxValue.toDouble + 0.1))
   }
 
   // 6.3

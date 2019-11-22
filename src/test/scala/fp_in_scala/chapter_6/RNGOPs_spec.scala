@@ -93,4 +93,10 @@ class RNGOps_spec extends FlatSpec with Matchers {
     val action = flatMap(rng => rng.nextInt)(a => rng => (a.toDouble, rng))
     action(rng) shouldBe (10, rng)
   }
+
+  // 6.11
+  "Unit" should "wrap a value" in {
+    val rng = TestRNG(10)
+    unit(5)(rng) shouldBe (5,rng)
+  }
 }
