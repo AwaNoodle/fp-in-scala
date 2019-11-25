@@ -7,9 +7,9 @@ final case class State[S, +A](run: S => (A, S)) {
     }
 
   def flatMap[B](g: A => State[S, B]): State[S, B] = {
-    state: S => {
-      val (aRes, aNext) = run(state)
-      g(aRes)
+    State { s =>
+      val (aRes, aNext) = run(s)
+      g(aRes).run(s)
     }
   }
 }
