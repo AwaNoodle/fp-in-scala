@@ -1,9 +1,7 @@
 package fp_in_scala.chapter_6
 
 object RNGOps {
-  // From text
-  // case class State[S,+A](run: S => (A,S))
-  
+  // From text  
   type State[S,+A] = S => (A,S)
   type Rand[+A] = State[RNG, A]
 
@@ -12,7 +10,7 @@ object RNGOps {
   // Orig from text, Replace 6.8
   def map[A,B](s: Rand[A])(f: A => B): Rand[B] =
     flatMap(s) { a =>
-      rng => (f(a), rng)
+      rng: RNG => (f(a), rng)
     }
 
   // 6.1
