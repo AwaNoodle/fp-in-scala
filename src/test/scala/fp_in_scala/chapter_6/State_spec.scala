@@ -20,4 +20,11 @@ class State_spec extends FlatSpec with Matchers {
          .map(a => a.toDouble)
          .run("State") shouldBe (10.0, "State")
   }
+
+  "Sequence" should "take a list of States and return a list of results" in {
+    val states = (1 to 10).map(x => State[String, Int](s => (x, s))).toList
+    val expected = ((1 to 10).toList, "State")
+    
+    State.sequence(states).run("State") shouldBe expected
+  }
 }
