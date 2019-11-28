@@ -21,6 +21,13 @@ class State_spec extends FlatSpec with Matchers {
          .run("State") shouldBe (10.0, "State")
   }
 
+  "map2" should "allow the combination of two states" in {
+    val a = State.unit[String, Int](10)
+    val b = State.unit[String, String]("b")
+
+    State.map2(a,b) { (a,b) => (a,b)}.run("Hello") shouldBe ((10, "b"), "Hello")
+  }
+
   "Sequence" should "take a list of States and return a list of results" in {
     val states = (1 to 10).map(x => State[String, Int](s => (x, s))).toList
     val expected = ((1 to 10).toList, "State")
