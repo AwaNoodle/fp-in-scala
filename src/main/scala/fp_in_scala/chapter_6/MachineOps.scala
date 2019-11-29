@@ -7,10 +7,27 @@ sealed trait Input
 case object Coin extends Input
 case object Turn extends Input
 
-case class Machine(locked: Boolean, candies: Int, coins: Int)
+case class Machine(locked: Boolean, candies: Int, coins: Int) {
+  def insertCoin(): Machine = if(candies > 0) {
+    Machine(false, candies, coins + 1)
+  } else {
+    this
+  }
+}
 
 object MachineOps {
-  final case class MachineStatus(coins: Int, candies: Int)
+  final case class MachineStatus(candies: Int, coins: Int)
 
-  def simulateMachine(inputs: List[Input]): State[Machine, MachineStatus] = ???
+  def simulateMachine(inputs: List[Input]): State[Machine, MachineStatus] = {
+    State{s =>
+      inputs.foldRight((MachineStatus(s.candies, s.coins), s)) { (input, acc) => input match {
+          case Coin => {
+            val newState = acc._2.insertCoin()
+            (MachineStatus(newState.candies, newState.coins), newState)
+          }
+          case Turn => acc
+        }
+      }
+    }
+  }
 }
