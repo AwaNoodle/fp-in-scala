@@ -13,6 +13,12 @@ case class Machine(locked: Boolean, candies: Int, coins: Int) {
   } else {
     this
   }
+
+  def turnHandle(): Machine = if(!locked && candies > 0) {
+    Machine(locked, candies - 1, coins)
+  } else {
+    this
+  }
 }
 
 object MachineOps {
@@ -20,12 +26,15 @@ object MachineOps {
 
   def simulateMachine(inputs: List[Input]): State[Machine, MachineStatus] = {
     State{s =>
-      inputs.foldRight((MachineStatus(s.candies, s.coins), s)) { (input, acc) => input match {
+      inputs.foldLeft((MachineStatus(s.candies, s.coins), s)) { (acc, input) => input match {
           case Coin => {
-            val newState = acc._2.insertCoin()
+            val newState = acc._2.insertCoin
             (MachineStatus(newState.candies, newState.coins), newState)
           }
-          case Turn => acc
+          case Turn => {
+            val newState = acc._2.turnHandle
+            (MachineStatus(newState.candies, newState.coins), newState)
+          }
         }
       }
     }
