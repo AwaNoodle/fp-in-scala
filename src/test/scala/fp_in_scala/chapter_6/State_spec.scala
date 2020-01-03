@@ -11,14 +11,14 @@ class State_spec extends FlatSpec with Matchers {
 
   "flatMap" should "allow a conversion of the result of the initial function via f" in {
     State.pure(10)
-         .flatMap(a => State.pure[String, Double](a.toDouble))
-         .run("State") shouldBe (10.0, "State")
+         .flatMap(a => State.pure[String, Double]((a+1).toDouble))
+         .run("State") shouldBe (11.0, "State")
   }
 
   "map" should "allow a conversion of the result of the initial function via f" in {
     State.pure(10)
-         .map(a => a.toDouble)
-         .run("State") shouldBe (10.0, "State")
+         .map(a => (a+1).toDouble)
+         .run("State") shouldBe (11.0, "State")
   }
 
   "map2" should "allow the combination of two states" in {
