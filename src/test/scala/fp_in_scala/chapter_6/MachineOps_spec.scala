@@ -14,9 +14,9 @@ class MachineOps_spec extends FlatSpec with Matchers {
     simulateMachine(inputs).run(fullLockedMachine) shouldBe (MachineStatus(10,1), Machine(false, 10, 1))
   }
 
-  it should "unlock and return candy when a coin is inserted and the handle is turned" in {
+  it should "unlock, return candy, and lock when a coin is inserted and the handle is turned" in {
     val inputs = List(Coin, Turn)
-    simulateMachine(inputs).run(fullLockedMachine) shouldBe (MachineStatus(9,1),Machine(false, 9, 1))
+    simulateMachine(inputs).run(fullLockedMachine) shouldBe (MachineStatus(9,1),Machine(true, 9, 1))
   }
 
   "A machine without candy" should "stay locked if a coin is added and return coin" in {

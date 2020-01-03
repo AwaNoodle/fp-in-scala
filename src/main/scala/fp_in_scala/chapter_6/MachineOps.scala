@@ -31,8 +31,8 @@ object MachineOps {
   }
 
   val insertCoin: State[Machine, Unit] = State {
-    case Machine(true, candies, coins) => ((), Machine(false, candies, coins + 1))
-    case current => ((),current)
+    case Machine(true, candies, coins) if candies > 0 => ((), Machine(false, candies, coins + 1))
+    case current => ((), current)
   }
 
   def processAllInput(inputs: List[Input]): State[Machine, Unit] = 
@@ -40,8 +40,6 @@ object MachineOps {
       case (currentState, Coin) => currentState.flatMap(_ => insertCoin)
       case (currentState, Turn) => currentState.flatMap(_ => turnHandle).map(_ => ()) 
     }
-
-
 
   def simulateMachine(inputs: List[Input]): State[Machine, MachineStatus] = 
     inputs.foldLeft(State.unit[Machine]){
