@@ -23,20 +23,30 @@ case class Machine(locked: Boolean, candies: Int, coins: Int) {
 
 object MachineOps {
   final case class MachineStatus(candies: Int, coins: Int)
-
-  def simulateMachine(inputs: List[Input]): State[Machine, MachineStatus] = {
-    State{s =>
-      inputs.foldLeft((MachineStatus(s.candies, s.coins), s)) { (acc, input) => input match {
-          case Coin => {
-            val newState = acc._2.insertCoin
-            (MachineStatus(newState.candies, newState.coins), newState)
-          }
-          case Turn => {
-            val newState = acc._2.turnHandle
-            (MachineStatus(newState.candies, newState.coins), newState)
-          }
-        }
-      }
-    }
+  
+  type Candy = Int 
+  val turnHandle : State[Machine, Option[Candy]] = State { 
+    case Machine(false, candies, coins) if candies > 0 => (Some(1), Machine(true, candies - 1, coins))
+    case current => (None, current)
   }
+
+  val insertCoin: State[Machine, Unit] = State {
+    case Machine(true, candies, coins) => ((), Machine(false, candies, coins + 1))
+    case current => ((),current)
+  }
+
+  def processAllInput(inputs: List[Input]): State[Machine, Unit] = 
+    inputs.foldLeft(State.unit[Machine]){
+      case (currentState, Coin) => currentState.flatMap(_ => insertCoin)
+      case (currentState, Turn) => currentState.flatMap(_ => turnHandle).map(_ => ()) 
+    }
+
+
+
+  def simulateMachine(inputs: List[Input]): State[Machine, MachineStatus] = 
+    inputs.foldLeft(State.unit[Machine]){
+      case (currentState, Coin) => currentState.flatMap(_ => insertCoin)
+      case (currentState, Turn) => currentState.flatMap(_ => turnHandle).map(_ => ())
+    }.flatMap(_ => State.get[Machine]).map(s => MachineStatus(s.candies, s.coins))
+  
 }

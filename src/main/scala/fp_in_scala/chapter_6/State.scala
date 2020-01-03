@@ -13,10 +13,14 @@ final case class State[S, +A](run: S => (A, S)) {
 }
   
 object State {
-  def unit[S, A](a: A) = State((s: S) => (a, s))
+
+  def pure[S, A](a: A) = State((s: S) => (a, s))
+  def unit[S] : State[S, Unit] = pure(())
+
+  def get[S] : State[S, S] = State((s: S) => (s,s))
 
   def sequence[S,A](fs: List[State[S, A]]): State[S, List[A]] = {
-    fs.foldRight(State.unit[S, List[A]](Nil)) { (currState, next) =>
+    fs.foldRight(State.pure[S, List[A]](Nil)) { (currState, next) =>
       map2(next, currState)((lstA, b) => b +: lstA)
     }
   }
