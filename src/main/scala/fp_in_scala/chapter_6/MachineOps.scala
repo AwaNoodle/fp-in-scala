@@ -42,9 +42,10 @@ object MachineOps {
     }
 
   def simulateMachine(inputs: List[Input]): State[Machine, MachineStatus] = 
-    inputs.foldLeft(State.unit[Machine]){
-      case (currentState, Coin) => currentState.flatMap(_ => insertCoin)
-      case (currentState, Turn) => currentState.flatMap(_ => turnHandle).map(_ => ())
-    }.flatMap(_ => State.get[Machine]).map(s => MachineStatus(s.candies, s.coins))
-  
+    for {
+      _ <- processAllInput(inputs)
+      state <- State.get[Machine]
+    } yield {
+      MachineStatus(state.candies, state.coins) 
+    }
 }
