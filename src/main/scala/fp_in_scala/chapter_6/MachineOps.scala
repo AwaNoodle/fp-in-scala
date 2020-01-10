@@ -7,19 +7,7 @@ sealed trait Input
 case object Coin extends Input
 case object Turn extends Input
 
-case class Machine(locked: Boolean, candies: Int, coins: Int) {
-  def insertCoin(): Machine = if(candies > 0) {
-    Machine(false, candies, coins + 1)
-  } else {
-    this
-  }
-
-  def turnHandle(): Machine = if(!locked && candies > 0) {
-    Machine(locked, candies - 1, coins)
-  } else {
-    this
-  }
-}
+case class Machine(locked: Boolean, candies: Int, coins: Int)
 
 object MachineOps {
   final case class MachineStatus(candies: Int, coins: Int)
