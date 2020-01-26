@@ -1,6 +1,7 @@
 package fp_in_scala.chapter_6
 
 import State._
+import scala.concurrent.Future
 
 // 6.11
 sealed trait Input
@@ -9,31 +10,48 @@ case object Turn extends Input
 
 case class Machine(locked: Boolean, candies: Int, coins: Int)
 
-object MachineOps {
+trait CandyMachine[Context[_]] {
+
+  def turnHandle: Context[Option[Candy]]
+  def insertCoin: Context[Unit]
+
+}
+
+trait KVStore[F[_]] {
+  def put(key: String, value: String): F[Unit]
+  def get(key: String): F[Option[String]]
+}
+abstract class KVStoreSync extends KVStore[MachineOps.Id]
+
+
+
+object MachineOps extends CandyMachine[MachineState] {
+  type Id[A] = A
   final case class MachineStatus(candies: Int, coins: Int)
-  
-  type Candy = Int 
-  val turnHandle : State[Machine, Option[Candy]] = State { 
-    case Machine(false, candies, coins) if candies > 0 => (Some(1), Machine(true, candies - 1, coins))
+
+  val turnHandle: MachineState[Option[Candy]] = State {
+    case Machine(false, candies, coins) if candies > 0 =>
+      (Some(1), Machine(true, candies - 1, coins))
     case current => (None, current)
   }
 
-  val insertCoin: State[Machine, Unit] = State {
+  val insertCoin: MachineState[Unit] = State {
     case Machine(true, candies, coins) if candies > 0 => ((), Machine(false, candies, coins + 1))
-    case current => ((), current)
+    case current                                      => ((), current)
   }
 
-  def processAllInput(inputs: List[Input]): State[Machine, Unit] = 
-    inputs.foldLeft(State.unit[Machine]){
-      case (currentState, Coin) => currentState.flatMap(_ => insertCoin)
-      case (currentState, Turn) => currentState.flatMap(_ => turnHandle).map(_ => ()) 
-    }
+}
 
-  def simulateMachine(inputs: List[Input]): State[Machine, MachineStatus] = 
+object Program {
+  import MachineOps._
+
+  implicit val candyMachine: CandyMachine[MachineState] = MachineOps
+
+  def simulateMachine(inputs: List[Input]): MachineState[MachineStatus] =
     for {
-      _ <- processAllInput(inputs)
+      _     <- processAllInput[MachineState](inputs)
       state <- State.get[Machine]
     } yield {
-      MachineStatus(state.candies, state.coins) 
+      MachineStatus(state.candies, state.coins)
     }
 }
