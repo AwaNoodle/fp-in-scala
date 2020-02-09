@@ -21,9 +21,8 @@ trait KVStore[F[_]] {
   def put(key: String, value: String): F[Unit]
   def get(key: String): F[Option[String]]
 }
+
 abstract class KVStoreSync extends KVStore[MachineOps.Id]
-
-
 
 object MachineOps extends CandyMachine[MachineState] {
   type Id[A] = A

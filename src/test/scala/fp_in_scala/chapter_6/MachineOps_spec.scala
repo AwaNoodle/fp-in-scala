@@ -4,6 +4,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class MachineOps_spec extends FlatSpec with Matchers {
   import MachineOps._
+  import Program._
 
   val fullLockedMachine = Machine(true, 10, 0)
   val emptyLockedMachine = Machine(true, 0, 0)

@@ -15,7 +15,7 @@ final case class State[S, +A](run: S => (A, S)) {
 object State {
   type Indexing[S] = {
     type St[A] = State[S, A]
-  } 
+  }
   implicit def stateMonadInstance[S] : Monad[Indexing[S]#St] = new Monad[Indexing[S]#St]{
     def pure[A](a: A): State[S,A] = State.pure(a)
     def flatMap[A, B](ca: State[S,A])(f: A => State[S,B]): State[S,B] = ca.flatMap(f)
