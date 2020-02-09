@@ -10,11 +10,12 @@ case object Turn extends Input
 
 case class Machine(locked: Boolean, candies: Int, coins: Int)
 
+// Define what options a candy machine should have
+// We're saying that a candy machine needs some kind of
+// context. It could be a State, IO, something else
 trait CandyMachine[Context[_]] {
-
   def turnHandle: Context[Option[Candy]]
   def insertCoin: Context[Unit]
-
 }
 
 trait KVStore[F[_]] {
@@ -24,6 +25,9 @@ trait KVStore[F[_]] {
 
 abstract class KVStoreSync extends KVStore[MachineOps.Id]
 
+// Implementation of our candy machine
+// We solidify the context here by specifying
+// the machine state which is a state monad of Machine and A
 object MachineOps extends CandyMachine[MachineState] {
   type Id[A] = A
   final case class MachineStatus(candies: Int, coins: Int)
@@ -38,12 +42,12 @@ object MachineOps extends CandyMachine[MachineState] {
     case Machine(true, candies, coins) if candies > 0 => ((), Machine(false, candies, coins + 1))
     case current                                      => ((), current)
   }
-
 }
 
 object Program {
   import MachineOps._
 
+  // This is supplied to `processAllInput`
   implicit val candyMachine: CandyMachine[MachineState] = MachineOps
 
   def simulateMachine(inputs: List[Input]): MachineState[MachineStatus] =

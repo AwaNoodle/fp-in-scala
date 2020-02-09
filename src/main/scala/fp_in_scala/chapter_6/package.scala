@@ -20,9 +20,9 @@ package object chapter_6 {
     def unit: Context[Unit]                              = pure(())
     def map[A, B](ca: Context[A])(f: A => B): Context[B] = flatMap(ca)(x => pure(f(x)))
   }
+
   implicit class MonadOps[Context[_], A](c: Context[A])(implicit monad: Monad[Context]) {
     def flatMap[B](f: A => Context[B]): Context[B] = monad.flatMap(c)(f)
     def map[B](f: A => B): Context[B]              = monad.map(c)(f)
   }
-
 }
