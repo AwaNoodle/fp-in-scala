@@ -13,6 +13,15 @@ final case class State[S, +A](run: S => (A, S)) {
 }
   
 object State {
+  type Indexing[S] = {
+    type St[A] = State[S, A]
+  }
+
+  // This is our implementation of state as a Monad
+  implicit def stateMonadInstance[S] : Monad[Indexing[S]#St] = new Monad[Indexing[S]#St]{
+    def pure[A](a: A): State[S,A] = State.pure(a)
+    def flatMap[A, B](ca: State[S,A])(f: A => State[S,B]): State[S,B] = ca.flatMap(f)
+  }
 
   def pure[S, A](a: A) = State((s: S) => (a, s))
   def unit[S] : State[S, Unit] = pure(())
