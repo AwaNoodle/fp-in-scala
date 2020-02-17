@@ -13,6 +13,7 @@ package object chapter_6 {
     }
   }
 
+  // Our implementation of a generic monad
   trait Monad[Context[_]] {
     def pure[A](a: A): Context[A]
     def flatMap[A, B](ca: Context[A])(f: A => Context[B]): Context[B]

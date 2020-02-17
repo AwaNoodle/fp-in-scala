@@ -13,11 +13,17 @@ case class Machine(locked: Boolean, candies: Int, coins: Int)
 // Define what options a candy machine should have
 // We're saying that a candy machine needs some kind of
 // context. It could be a State, IO, something else
+// So we would wrap the return of the thing we want in
+// the context. i.e. inserting the coin could give us an
+// IO[Unit] if we used a CandyMachine[IO]
+// This could be F[_] with no difference - Context is the name
+// Not a type
 trait CandyMachine[Context[_]] {
   def turnHandle: Context[Option[Candy]]
   def insertCoin: Context[Unit]
 }
 
+// Example of KVStore taking in a generic context
 trait KVStore[F[_]] {
   def put(key: String, value: String): F[Unit]
   def get(key: String): F[Option[String]]
@@ -47,7 +53,9 @@ object MachineOps extends CandyMachine[MachineState] {
 object Program {
   import MachineOps._
 
-  // This is supplied to `processAllInput`
+  // This is supplied to `processAllInput` as the second implicit param
+  // The first implict param is from State where there is a definition of Monad
+  // for State[S,A] which in our case is MachineState[A]
   implicit val candyMachine: CandyMachine[MachineState] = MachineOps
 
   def simulateMachine(inputs: List[Input]): MachineState[MachineStatus] =
