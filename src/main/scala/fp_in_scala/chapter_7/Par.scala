@@ -1,5 +1,6 @@
 package fp_in_scala.chapter_7
 
+import java.time.{Duration, Instant}
 import java.util.concurrent._
 
 object Par {
@@ -15,7 +16,7 @@ object Par {
       //UnitFuture(f(a.get, b.get))
 
       // Ex 7.3
-      map2Future(a, b, f)
+      map2Future(a, b, f, timeoutInMs)
     }
   }
 
@@ -50,8 +51,11 @@ object Par {
 
   // Ex 7.3
   private def map2Future[A,B,C](af: Future[A], bf: Future[B], f: (A,B) => C, timeoutInMs: Int = 100): Future[C] = {
-    val a = af.get(timeoutInMs, TimeUnit.MICROSECONDS)
-    val b = bf.get(timeoutInMs, TimeUnit.MILLISECONDS)
+    val starts = Instant.now();
+    val a = af.get(timeoutInMs, TimeUnit.MILLISECONDS)
+    val ends = Instant.now()
+    val remaining = timeoutInMs - Duration.between(starts, ends).toMillis()
+    val b = bf.get(remaining, TimeUnit.MILLISECONDS)
     UnitFuture(f(a,b))
   }
 }

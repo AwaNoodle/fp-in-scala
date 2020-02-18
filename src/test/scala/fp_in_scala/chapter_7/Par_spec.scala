@@ -14,4 +14,38 @@ class Par_spec extends FlatSpec with Matchers {
     val es = Executors.newCachedThreadPool()
     result(es).get shouldBe "10-C"
   }
+
+  it should "throw when the timeout is violated by parA" in {
+    val parA: Par[Int] = (es) => es.submit (() => {
+      Thread.sleep(1000)
+      10
+    })
+    val parB = unit('C')
+
+    val result = map2(parA, parB, 100) { (a,b) => s"$a-$b" }
+    val es = Executors.newCachedThreadPool()
+
+    assertThrows[TimeoutException] {
+      result(es).get
+    }
+  }
+
+  it should "throw when the timeout is violated by parB" in {
+    val parA: Par[Int] = (es) => es.submit (() => {
+      Thread.sleep(1000)
+      10
+    })
+
+    val parB: Par[Char] = (es) => es.submit (() => {
+      Thread.sleep(5000)
+      'C'
+    })
+
+    val result = map2(parA, parB, 1500) { (a,b) => s"$a-$b" }
+    val es = Executors.newCachedThreadPool()
+
+    assertThrows[TimeoutException] {
+      result(es).get
+    }
+  }
 }
