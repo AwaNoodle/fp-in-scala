@@ -6,6 +6,11 @@ import java.util.concurrent._
 class Par_spec extends FlatSpec with Matchers {
   import Par._
 
+  private def sleepingFuture[A](sleepMs: Long, unit: A): Par[A] = es => es.submit(() => {
+    Thread.sleep(sleepMs)
+    unit
+  })
+
   "map2" should "map the result of two Pars" in {
     val parA = unit(10)
     val parB = unit('C')
@@ -16,36 +21,26 @@ class Par_spec extends FlatSpec with Matchers {
   }
 
   it should "throw when the timeout is violated by parA" in {
-    val parA: Par[Int] = (es) => es.submit (() => {
-      Thread.sleep(1000)
-      10
-    })
+    val parA: Par[Int] = sleepingFuture(1000, 10)
     val parB = unit('C')
 
-    val result = map2(parA, parB, 100) { (a,b) => s"$a-$b" }
+    val result = map2(parA, parB) { (a,b) => s"$a-$b" }
     val es = Executors.newCachedThreadPool()
 
     assertThrows[TimeoutException] {
-      result(es).get
+      result(es).get(100, TimeUnit.MILLISECONDS)
     }
   }
 
   it should "throw when the timeout is violated by parB" in {
-    val parA: Par[Int] = (es) => es.submit (() => {
-      Thread.sleep(1000)
-      10
-    })
+    val parA: Par[Int] = sleepingFuture(1000, 10)
+    val parB: Par[Char] = sleepingFuture(5000, 'C')
 
-    val parB: Par[Char] = (es) => es.submit (() => {
-      Thread.sleep(5000)
-      'C'
-    })
-
-    val result = map2(parA, parB, 1500) { (a,b) => s"$a-$b" }
+    val result = map2(parA, parB) { (a,b) => s"$a-$b" }
     val es = Executors.newCachedThreadPool()
 
     assertThrows[TimeoutException] {
-      result(es).get
+      result(es).get(1500, TimeUnit.MILLISECONDS)
     }
   }
 }

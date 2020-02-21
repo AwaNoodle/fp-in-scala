@@ -6,17 +6,16 @@ import java.util.concurrent._
 object Par {
   type Par[A] = ExecutorService => Future[A]
 
-  // 7.1, 7.3 add timeout
+  // 7.1, 7.3 use Map2Future
   // Combines the results of two parallel computations with a binary function
-  // def map2[A,B,C](l: Par[A], r: Par[B])(f: (A,B) => C) : Par[C] = ???
-  def map2[A,B,C](l: Par[A], r: Par[B], timeoutInMs: Int = 100)(f: (A,B) => C) : Par[C] = {
+  def map2[A,B,C](l: Par[A], r: Par[B])(f: (A,B) => C) : Par[C] = {
     (es: ExecutorService) => {
       val a = l(es)
       val b = r(es)
       //UnitFuture(f(a.get, b.get))
 
       // Ex 7.3
-      map2Future(a, b, f, timeoutInMs)
+      new Map2Future(a, b, f)
     }
   }
 
@@ -49,14 +48,21 @@ object Par {
     def cancel(evenIfRunning: Boolean): Boolean = false
   }
 
-  // Ex 7.3
-  private def map2Future[A,B,C](af: Future[A], bf: Future[B], f: (A,B) => C, timeoutInMs: Int = 100): Future[C] = {
-    val starts = Instant.now();
-    val a = af.get(timeoutInMs, TimeUnit.MILLISECONDS)
-    val ends = Instant.now()
-    val remaining = timeoutInMs - Duration.between(starts, ends).toMillis()
-    val b = bf.get(remaining, TimeUnit.MILLISECONDS)
-    UnitFuture(f(a,b))
+  // Oli suggestion on Ex 7.3 (signature)
+  private class Map2Future[A, B, C](fa: Future[A], fb: Future[B], f: (A, B) => C)  extends Future[C] {
+    def isDone = true
+    def get = f(fa.get, fb.get)
+    def get(timeout: Long, units: TimeUnit) = { 
+      val starts = Instant.now();
+      val a = fa.get(timeout, units)
+      val ends = Instant.now()
+      val remaining = units.toMillis(timeout) - Duration.between(starts, ends).toMillis()
+      val b = fb.get(remaining, TimeUnit.MILLISECONDS)
+      f(a,b)
+    }
+
+    def isCancelled = false
+    def cancel(evenIfRunning: Boolean): Boolean = false
   }
 }
 
