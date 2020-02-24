@@ -64,5 +64,8 @@ object Par {
     def isCancelled = false
     def cancel(evenIfRunning: Boolean): Boolean = false
   }
+
+  // Ex 7.4
+  def asyncF[A,B](f: A => B): A => Par[B] = a => lazyUnit[B](f(a))
 }
 

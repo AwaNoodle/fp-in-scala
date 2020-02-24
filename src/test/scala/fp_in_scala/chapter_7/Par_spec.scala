@@ -43,4 +43,13 @@ class Par_spec extends FlatSpec with Matchers {
       result(es).get(1500, TimeUnit.MILLISECONDS)
     }
   }
+
+  "asyncF" should "let you convert an A => B function to an async A => B" in {
+    val f = (a: Int) => a.toString
+
+    val af = asyncF(f)(10)
+
+    val es = Executors.newCachedThreadPool()
+    af(es).get shouldBe "10"
+  }
 }
