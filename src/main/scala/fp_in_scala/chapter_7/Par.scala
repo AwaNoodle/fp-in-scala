@@ -67,5 +67,12 @@ object Par {
 
   // Ex 7.4
   def asyncF[A,B](f: A => B): A => Par[B] = a => lazyUnit[B](f(a))
+
+  // Ex 7.5
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] = (es: ExecutorService) => {
+    es.submit(new Callable[List[A]] {
+      def call = ps.foldLeft(List[A]()) { (resList, pA) => resList :+ pA(es).get }
+    })
+  }
 }
 
