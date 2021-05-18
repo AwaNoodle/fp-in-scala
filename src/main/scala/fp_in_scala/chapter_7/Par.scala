@@ -78,5 +78,33 @@ object Par {
   def sequence[A](ps: List[Par[A]]): Par[List[A]] = {
     ps.foldRight(unit(List[A]())) { (pA, resList) => map2(pA, resList) { _ :: _ } }
   }
+
+  // Book listing
+  def parMap[A,B](ps: List[A])(f: A => B): Par[List[B]] = fork {
+    val fbs: List[Par[B]] = ps.map(asyncF(f))
+    sequence(fbs)
+  }
+
+  // Ex 7.6
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
+    // convert the List[A] to a List[Par[List[A]]]
+    // Using List A so we can flatten out filtered value
+    var filtered = as.map(asyncF((a: A) => if(f(a)) List(a) else List() ))
+
+    // Convert to Par[List[List[A]]] -- Ready to flatten
+    var sequenced = sequence(filtered)
+
+    // Need to convert the List[List[A]] to a List[A]
+    // So we need a map
+    // Is UnitFuture a good idea here though?
+    def map[B,C](l: Par[B])(f: B => C): Par[C] = {
+      (es: ExecutorService) => {
+        var b = l(es)
+        UnitFuture(f(b.get))
+      }
+    }
+
+    map(sequenced)(_.flatten)
+  }
 }
 

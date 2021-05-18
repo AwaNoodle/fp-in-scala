@@ -59,4 +59,12 @@ class Par_spec extends FlatSpec with Matchers {
 
     runPar(actualPar).get shouldBe expected
   }
+
+  "parFilter" should "filter a list in parallel" in {
+    val items = List(1,2,3,4,5,6)
+    val expected = List(2,4,6)
+
+    val result = parFilter(items){ _ % 2 == 0 }
+    runPar(result).get shouldBe expected
+  }
 }
