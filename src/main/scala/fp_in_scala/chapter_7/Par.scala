@@ -89,10 +89,10 @@ object Par {
   def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
     // convert the List[A] to a List[Par[List[A]]]
     // Using List A so we can flatten out filtered value
-    var filtered = as.map(asyncF((a: A) => if(f(a)) List(a) else List() ))
+    val filtered = as.map(asyncF((a: A) => if(f(a)) List(a) else List() ))
 
     // Convert to Par[List[List[A]]] -- Ready to flatten
-    var sequenced = sequence(filtered)
+    val sequenced = sequence(filtered)
 
     // Need to convert the List[List[A]] to a List[A]
     // So we need a map
