@@ -21,7 +21,7 @@
   };
 
   scripts."local-test".exec = ''
-    devenv ci
+    mill _.compile
     mill _.test
   '';
 }
