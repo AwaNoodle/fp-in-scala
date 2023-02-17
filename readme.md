@@ -1,8 +1,9 @@
 # FP in Scala
 
-Exercises from the [FP in Scala book](https://www.manning.com/books/functional-programming-in-scala)
+Working through the exercises in [FP in Scala book](https://www.manning.com/books/functional-programming-in-scala)
 [Book Github](https://github.com/fpinscala/fpinscala)
-Exercises can be see one [www.scala-exercises.org](www.scala-exercises.org/fp_in_scala/)
+
+Exercises can be see on [www.scala-exercises.org](www.scala-exercises.org/fp_in_scala/)
 
 ## Setup
 

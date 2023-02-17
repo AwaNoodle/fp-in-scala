@@ -2,9 +2,7 @@
 
 {
   # https://devenv.sh/packages/
-  packages = [
-    pkgs.mill
-  ];
+  packages = [ pkgs.mill ];
 
   # https://devenv.sh/languages/
   languages = {
@@ -14,6 +12,11 @@
 
   # https://devenv.sh/pre-commit-hooks/
   pre-commit.hooks = {
-    mdsh.enable = true;
+    # Github action linting
+    actionlint.enable = true;
+    # Markdown 
+    markdownlint.enable = true;
+    # Nix formatter
+    nixfmt.enable = true;
   };
 }
