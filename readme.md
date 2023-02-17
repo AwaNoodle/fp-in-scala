@@ -1,5 +1,7 @@
 # FP in Scala
 
+![Build](https://github.com/awanoodle/fp-in-scala/actions/workflows/build-on-push.yml/badge.svg)
+
 Working through the exercises in [FP in Scala book](https://www.manning.com/books/functional-programming-in-scala)
 [Book Github](https://github.com/fpinscala/fpinscala)
 
