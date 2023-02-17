@@ -19,4 +19,9 @@
     # Nix formatter
     nixfmt.enable = true;
   };
+
+  scripts."local-test".exec = ''
+    devenv ci
+    mill _.test
+  '';
 }
